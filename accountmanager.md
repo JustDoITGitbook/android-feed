@@ -7,8 +7,8 @@ accountManager.addAccountExplicitly((Account) account, "password", (Bundle) user
 
 Account account = new Account(username, accountType);
 
-String accountType = "com.infstory"; // 帳號識別類型
-String username = "yongjhih@example.com"; // 帳號名稱
+String accountType = "com.upup8"; // 账号类型
+String username = "otnp50@example.com"; // 账号名
 ```
 
 
