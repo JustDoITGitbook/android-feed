@@ -1,6 +1,6 @@
 # AccountManager {#使用accountmanager和abstractaccountauthenticator建立账户系统}
 
-### 建立账号
+### 示例：
 
 ```java
 accountManager.addAccountExplicitly((Account) account, "password", (Bundle) userdata); // nullable userdata
