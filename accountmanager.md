@@ -57,8 +57,12 @@ String username = "otnp50@example.com"; // 账号名
 @param callback 结果回调
 @param 回调的线程，null时为主线程
 public AccountManagerFuture<Bundle> getAuthToken(
-            final Account account, final String authTokenType, final Bundle options,
-            final Activity activity, AccountManagerCallback<Bundle> callback, Handler handler)
+            final Account account, 
+            final String authTokenType, 
+            final Bundle options,
+            final Activity activity, 
+            AccountManagerCallback<Bundle> callback, 
+            Handler handler)
 ```
 
 获取账户列表：
@@ -74,6 +78,39 @@ public Account[] getAccountsByType(String type)
 @param accountType 账户类型
 @param authToken 令牌
 public void invalidateAuthToken(final String accountType, final String authToken)
+```
+
+获取密码：
+
+```java
+@param account 账户
+public String getPassword(final Account account) 
+```
+
+## 创建Authenticator {#创建authenticator}
+
+步骤：
+
+* 继承AbstractAcccountAuthenticator
+
+* 重写addAccount\(\),getAuthenToken\(\)方法。如果有需要还可以重写其他方法
+
+重写`addAccount()`方法：
+
+```java
+@Override
+    public Bundle addAccount(AccountAuthenticatorResponse response, 
+                            String accountType, 
+                            String authTokenType, 
+                            String[] requiredFeatures, 
+                            Bundle options) 
+    throws NetworkErrorException {
+        Intent intent=new Intent(mContext,AuthenticatorActivity.class);
+        intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE,response);
+        Bundle bundle=new Bundle();
+        bundle.putParcelable(AccountManager.KEY_INTENT,intent);
+        return bundle;
+    }
 ```
 
 
