@@ -84,7 +84,7 @@ public void invalidateAuthToken(final String accountType, final String authToken
 
 ```java
 @param account 账户
-public String getPassword(final Account account) 
+public String getPassword(final Account account)
 ```
 
 ## 创建Authenticator {#创建authenticator}
@@ -111,6 +111,91 @@ public String getPassword(final Account account)
         bundle.putParcelable(AccountManager.KEY_INTENT,intent);
         return bundle;
     }
+```
+
+重写`getAuthenToken()`方法。
+
+> **注意**，如果之前成功获取过`AuthenToken`会缓存，之后不会在调用`getAuthenToken()`方法，除非调用`invalidateAuthenToken()`
+
+```java
+@Override
+    public Bundle getAuthToken(AccountAuthenticatorResponse response, 
+                                Account account, 
+                                String authTokenType, 
+                                Bundle options) throws NetworkErrorException {
+        //可以请求服务器获取token,这里为了简单直接返回
+        Bundle bundle;
+        if(!authTokenType.equals(Constants.AUTH_TOKEN_TYPE)){
+            bundle=new Bundle();
+            //没有error_code的情况,不会抛出异常
+            //bundle.putInt(AccountManager.KEY_ERROR_CODE,1);
+            bundle.putString(AccountManager.KEY_ERROR_MESSAGE,"invalid authToken");
+            return bundle;
+        }
+
+        AccountManager am=AccountManager.get(mContext);
+        String psw=am.getPassword(account);
+        if(!TextUtils.isEmpty(psw)){
+            //链接服务器获取token
+            Random random=new Random();
+            bundle=new Bundle();
+            bundle.putString(AccountManager.KEY_AUTHTOKEN,random.nextLong()+"");
+            //不返回name和type会报错“the type and name should not be empty”
+            bundle.putString(AccountManager.KEY_ACCOUNT_TYPE,account.type);
+            bundle.putString(AccountManager.KEY_ACCOUNT_NAME,account.name);
+            return bundle;
+        }
+
+
+        bundle=new Bundle();
+        Intent intent=new Intent(mContext,AuthenticatorActivity.class);
+        bundle.putParcelable(AccountManager.KEY_INTENT,intent);
+        intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE,account.type);
+        intent.putExtra(AccountManager.KEY_ACCOUNT_NAME,account.name);
+        intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE,response);
+        return bundle;
+    }
+```
+
+* 为`Authenticator`创建`Service`
+
+```java
+public class AuthenticatorService extends Service{
+    private MyAuthenticator mAuthenticator=new MyAuthenticator(this);
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mAuthenticator.getIBinder();
+    }
+}
+```
+
+* 为了把`Authenticator`组件添加到账户管理框架，需要添加`Metadata`文件描述组件，在`res/xml/`目录下声明组件
+
+```xml
+<account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accountType="com.example.accountmanagersample"
+    android:icon="@drawable/ic_delete"
+    android:smallIcon="@drawable/ic_delete"
+    android:label="@string/app_name"
+/>
+```
+
+> `accountType`很重要，用来唯一标识`Authenticator`，`AccountManager`的方法中有`accountType`的参数需要和此处保持一致。
+
+* 在`Manifest`文件声明之前创建的`Service`
+
+```
+<service android:name=".AuthenticatorService">
+            <intent-filter>
+                <action
+                    android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator"/>
+        </service>
 ```
 
 
