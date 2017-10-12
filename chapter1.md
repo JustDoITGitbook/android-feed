@@ -1,9 +1,7 @@
 # rxjava & rxAndroid
 
-
-
 ```
-
+Why is my organization not listed?
 ```
 
 > In order to sync one of your GitBook organizations with a GitHub organization, our GitBook OAuth application needs permissions to access this GitHub organization. Otherwise, it will not be listed.
