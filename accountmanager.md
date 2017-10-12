@@ -186,7 +186,7 @@ public class AuthenticatorService extends Service{
 
 * 在`Manifest`文件声明之前创建的`Service`
 
-```
+```xml
 <service android:name=".AuthenticatorService">
             <intent-filter>
                 <action
