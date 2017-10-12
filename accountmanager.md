@@ -31,8 +31,6 @@ String username = "otnp50@example.com"; // 账号名
 
 顾名思义，`AccountManager`是用来管理用户账户。使用`AccountManager`有两个要点：`Bundle` 、`key`常量的含义、如何使用账户管理方法。`AccountManager`定义了许多`Bundle`、`Key`常量，可以用作`Intent`的`key`用于`Activity`之间传递参数；也可以作为`Authenticator`返回`Bundle`的`Key`，这种情况，`AccountManager`会根据`Key`的情况作出相应操作，比如，跳转到验证身份页面，返回`Accont Type`,`AuthToken`,`Account Name`\(`getAuthenToken()`有返回`AuthToken`时必须返回`Account Type`和`Account Name`，不然会提示`“the type and name should not be empty”`\)等。
 
-
-
 | 常用Bundle key |
 | :---: |
 
@@ -49,7 +47,7 @@ String username = "otnp50@example.com"; // 账号名
 
 **常用AccountManager管理账户方法：**
 
-获取AuthToken：
+获取`AuthToken`：
 
 ```java
 @param account 账户
@@ -60,7 +58,22 @@ String username = "otnp50@example.com"; // 账号名
 @param 回调的线程，null时为主线程
 public AccountManagerFuture<Bundle> getAuthToken(
             final Account account, final String authTokenType, final Bundle options,
-            final Activity activity, AccountManagerCallback<Bundle> callback, Handler handler) 
+            final Activity activity, AccountManagerCallback<Bundle> callback, Handler handler)
+```
+
+获取账户列表：
+
+```java
+@param type 账户列表类型
+public Account[] getAccountsByType(String type)
+```
+
+从`AccountManager`的缓存中移除`AuthToken`:
+
+```java
+@param accountType 账户类型
+@param authToken 令牌
+public void invalidateAuthToken(final String accountType, final String authToken)
 ```
 
 
